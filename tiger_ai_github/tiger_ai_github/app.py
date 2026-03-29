@@ -13,7 +13,7 @@ CORS(app)
 # Configure Gemini API from .env
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
-    raise ValueError("❌ GEMINI_API_KEY not found! .env file lo key pettavaa?")
+    raise ValueError("❌ GEMINI_API_KEY not found! .env file put in this place?")
 
 genai.configure(api_key=API_KEY)
 
