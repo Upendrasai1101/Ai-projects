@@ -1,7 +1,0 @@
-flask
-flask-cors
-requests
-python-dotenv
-beautifulsoup4
-lxml
-gunicorn
