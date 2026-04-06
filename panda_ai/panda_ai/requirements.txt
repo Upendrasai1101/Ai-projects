@@ -1,0 +1,6 @@
+flask
+flask-cors
+requests
+python-dotenv
+duckduckgo-search
+gunicorn
