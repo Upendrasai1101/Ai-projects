@@ -1,6 +1,0 @@
-flask
-flask-cors
-python-dotenv
-requests
-duckduckgo_search
-gunicorn
