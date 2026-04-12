@@ -28,17 +28,25 @@ jobs:
           # Clone HF Space
           git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
 
-          # Clear old files in Space (keep .git folder)
-          find hf_space -mindepth 1 -not -path 'hf_space/.git*' -delete
+          # Delete everything in Space except .git
+          cd hf_space
+          find . -mindepth 1 -not -path './.git*' -delete
+          cd ..
 
-          # Copy panda_ai/ contents to Space ROOT
-          # Exclude workflow yml files — those are GitHub only
-          rsync -av --exclude='*.yml' --exclude='*.yaml' panda_ai/ hf_space/
+          # Copy panda_ai/ folder contents directly to Space root
+          # Note: cp panda_ai/* copies contents, not the folder itself
+          cp panda_ai/Dockerfile   hf_space/Dockerfile
+          cp panda_ai/app.py       hf_space/app.py
+          cp panda_ai/search_tool.py hf_space/search_tool.py
+          cp panda_ai/index.html   hf_space/index.html
+          cp panda_ai/script.js    hf_space/script.js
+          cp panda_ai/requirements.txt hf_space/requirements.txt
+          cp panda_ai/README.md    hf_space/README.md
 
           cd hf_space
 
           git add -A
 
-          git diff --staged --quiet || git commit -m "Auto-sync from GitHub: $(git -C .. rev-parse --short HEAD)"
+          git diff --staged --quiet || git commit -m "Sync from GitHub: $(git -C .. rev-parse --short HEAD)"
 
           git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
