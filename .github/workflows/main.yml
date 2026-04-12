@@ -22,26 +22,17 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Configure git
           git config --global user.email "upendrasai1101@gmail.com"
           git config --global user.name "Upendrasai Chaturvedula"
 
-          # Clone the HF Space repo using token in URL
-          # Token in URL = correct way to avoid 401
-          git clone https://upendrasai1101:${HF_TOKEN}@huggingface.co/spaces/upendrasai1101/Panda-AI-Official hf_space
+          git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
 
-          # Copy ONLY panda_ai/ contents into Space root
-          # This ensures Dockerfile, app.py etc. are at root — not inside a folder
           cp -r panda_ai/. hf_space/
 
-          # Go into Space repo
           cd hf_space
 
-          # Stage all changes
           git add -A
 
-          # Only commit if there are actual changes
           git diff --staged --quiet || git commit -m "Auto-sync from GitHub: $(git -C .. rev-parse --short HEAD)"
 
-          # Push to HF Space
-          git push https://upendrasai1101:${HF_TOKEN}@huggingface.co/spaces/upendrasai1101/Panda-AI-Official main
+          git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
