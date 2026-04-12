@@ -33,15 +33,14 @@ jobs:
           find . -mindepth 1 -not -path './.git*' -delete
           cd ..
 
-          # Copy panda_ai/ folder contents directly to Space root
-          # Note: cp panda_ai/* copies contents, not the folder itself
-          cp panda_ai/Dockerfile   hf_space/Dockerfile
-          cp panda_ai/app.py       hf_space/app.py
-          cp panda_ai/search_tool.py hf_space/search_tool.py
-          cp panda_ai/index.html   hf_space/index.html
-          cp panda_ai/script.js    hf_space/script.js
-          cp panda_ai/requirements.txt hf_space/requirements.txt
-          cp panda_ai/README.md    hf_space/README.md
+          # Files are inside panda_ai/panda_ai/ (double folder)
+          cp panda_ai/panda_ai/Dockerfile        hf_space/Dockerfile
+          cp panda_ai/panda_ai/app.py            hf_space/app.py
+          cp panda_ai/panda_ai/search_tool.py    hf_space/search_tool.py
+          cp panda_ai/panda_ai/index.html        hf_space/index.html
+          cp panda_ai/panda_ai/script.js         hf_space/script.js
+          cp panda_ai/panda_ai/requirements.txt  hf_space/requirements.txt
+          cp panda_ai/panda_ai/readme.md         hf_space/README.md
 
           cd hf_space
 
