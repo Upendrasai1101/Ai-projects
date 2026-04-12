@@ -25,9 +25,15 @@ jobs:
           git config --global user.email "upendrasai1101@gmail.com"
           git config --global user.name "Upendrasai Chaturvedula"
 
+          # Clone HF Space
           git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
 
-          cp -r panda_ai/. hf_space/
+          # Clear old files in Space (keep .git folder)
+          find hf_space -mindepth 1 -not -path 'hf_space/.git*' -delete
+
+          # Copy panda_ai/ contents to Space ROOT
+          # Exclude workflow yml files — those are GitHub only
+          rsync -av --exclude='*.yml' --exclude='*.yaml' panda_ai/ hf_space/
 
           cd hf_space
 
