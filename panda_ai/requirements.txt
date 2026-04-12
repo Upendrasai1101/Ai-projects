@@ -1,0 +1,8 @@
+flask
+flask-cors
+python-dotenv
+requests
+feedparser
+trafilatura
+groq
+gunicorn
