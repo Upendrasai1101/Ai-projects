@@ -28,7 +28,7 @@ jobs:
       # Step 3: Push ONLY the panda_ai/ subfolder to HF Space root
       - name: Upload panda_ai folder to Hugging Face Space
         env:
-          HF_TOKEN: ${{ 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 }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           python - <<'EOF'
           import os
