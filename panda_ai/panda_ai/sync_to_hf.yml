@@ -1,0 +1,84 @@
+name: Sync Panda AI to Hugging Face
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'panda_ai/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push panda_ai/ contents to HF Space root
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "upendrasai1101@gmail.com"
+          git config --global user.name "Upendrasai Chaturvedula"
+
+          # Clone HF Space
+          git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
+
+          # Clear old files in Space (keep .git)
+          cd hf_space
+          find . -mindepth 1 -not -path './.git*' -delete
+          cd ..
+
+          # ── DEBUG: Show actual folder structure ──
+          echo "=== GitHub repo structure ==="
+          find panda_ai -maxdepth 3 -type f | head -40
+
+          # ── Smart copy: handles both panda_ai/ and panda_ai/panda_ai/ ──
+          # Check if files are directly in panda_ai/ or in panda_ai/panda_ai/
+          if [ -f "panda_ai/app.py" ]; then
+            echo "Files found in panda_ai/ (single level)"
+            SOURCE="panda_ai"
+          elif [ -f "panda_ai/panda_ai/app.py" ]; then
+            echo "Files found in panda_ai/panda_ai/ (double level)"
+            SOURCE="panda_ai/panda_ai"
+          else
+            echo "ERROR: Cannot find app.py in expected locations!"
+            exit 1
+          fi
+
+          echo "Using source: $SOURCE"
+
+          # Copy all files to HF Space root
+          for f in app.py search_tool.py file_processor.py memory.py \
+                    index.html script.js requirements.txt Dockerfile; do
+            if [ -f "$SOURCE/$f" ]; then
+              cp "$SOURCE/$f" hf_space/
+              echo "Copied: $f"
+            else
+              echo "WARNING: $f not found in $SOURCE/"
+            fi
+          done
+
+          # README — try both names
+          for readme in readme.md README.md Readme.md; do
+            if [ -f "$SOURCE/$readme" ]; then
+              cp "$SOURCE/$readme" hf_space/README.md
+              echo "Copied README: $readme"
+              break
+            fi
+          done
+
+          cd hf_space
+
+          echo "=== Files in HF Space ==="
+          ls -la
+
+          git add -A
+
+          git diff --staged --quiet || git commit -m "V5: Multimodal + Memory + 95% Accuracy [$(git -C .. rev-parse --short HEAD)]"
+
+          git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
