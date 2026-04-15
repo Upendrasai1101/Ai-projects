@@ -1,9 +1,0 @@
-flask
-flask-cors
-python-dotenv
-requests
-feedparser
-trafilatura
-beautifulsoup4
-lxml
-gunicorn
