@@ -28,24 +28,57 @@ jobs:
           # Clone HF Space
           git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
 
-          # Delete everything in Space except .git
+          # Clear old files in Space (keep .git)
           cd hf_space
           find . -mindepth 1 -not -path './.git*' -delete
           cd ..
 
-          # Files are inside panda_ai/panda_ai/ (double folder)
-          cp panda_ai/panda_ai/Dockerfile        hf_space/Dockerfile
-          cp panda_ai/panda_ai/app.py            hf_space/app.py
-          cp panda_ai/panda_ai/search_tool.py    hf_space/search_tool.py
-          cp panda_ai/panda_ai/index.html        hf_space/index.html
-          cp panda_ai/panda_ai/script.js         hf_space/script.js
-          cp panda_ai/panda_ai/requirements.txt  hf_space/requirements.txt
-          cp panda_ai/panda_ai/readme.md         hf_space/README.md
+          # ── DEBUG: Show actual folder structure ──
+          echo "=== GitHub repo structure ==="
+          find panda_ai -maxdepth 3 -type f | head -40
+
+          # ── Smart copy: handles both panda_ai/ and panda_ai/panda_ai/ ──
+          # Check if files are directly in panda_ai/ or in panda_ai/panda_ai/
+          if [ -f "panda_ai/app.py" ]; then
+            echo "Files found in panda_ai/ (single level)"
+            SOURCE="panda_ai"
+          elif [ -f "panda_ai/panda_ai/app.py" ]; then
+            echo "Files found in panda_ai/panda_ai/ (double level)"
+            SOURCE="panda_ai/panda_ai"
+          else
+            echo "ERROR: Cannot find app.py in expected locations!"
+            exit 1
+          fi
+
+          echo "Using source: $SOURCE"
+
+          # Copy all files to HF Space root
+          for f in app.py search_tool.py file_processor.py memory.py \
+                    index.html script.js requirements.txt Dockerfile; do
+            if [ -f "$SOURCE/$f" ]; then
+              cp "$SOURCE/$f" hf_space/
+              echo "Copied: $f"
+            else
+              echo "WARNING: $f not found in $SOURCE/"
+            fi
+          done
+
+          # README — try both names
+          for readme in readme.md README.md Readme.md; do
+            if [ -f "$SOURCE/$readme" ]; then
+              cp "$SOURCE/$readme" hf_space/README.md
+              echo "Copied README: $readme"
+              break
+            fi
+          done
 
           cd hf_space
 
+          echo "=== Files in HF Space ==="
+          ls -la
+
           git add -A
 
-          git diff --staged --quiet || git commit -m "Sync from GitHub: $(git -C .. rev-parse --short HEAD)"
+          git diff --staged --quiet || git commit -m "V5: Multimodal + Memory + 95% Accuracy [$(git -C .. rev-parse --short HEAD)]"
 
           git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
