@@ -1,0 +1,17 @@
+flask
+flask-cors
+python-dotenv
+requests
+feedparser
+trafilatura
+gunicorn
+pdfplumber
+python-docx
+openpyxl
+python-pptx
+pytesseract
+Pillow
+openai-whisper
+moviepy
+SpeechRecognition
+pytz

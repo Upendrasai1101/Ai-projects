@@ -1,0 +1,132 @@
+name: Sync Panda AI V6 to Hugging Face
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'panda_ai/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Sync V6 files to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "upendrasai1101@gmail.com"
+          git config --global user.name "Upendrasai Chaturvedula"
+
+          # Clone HF Space
+          git clone https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official hf_space
+
+          # Clear old files (preserve .git)
+          cd hf_space
+          find . -mindepth 1 -not -path './.git*' -delete
+          cd ..
+
+          # Smart path detection
+          echo "=== Repo structure ==="
+          find panda_ai -maxdepth 3 -type f | sort | head -30
+
+          if [ -f "panda_ai/app.py" ]; then
+            SOURCE="panda_ai"
+            echo "✅ Source: panda_ai/"
+          elif [ -f "panda_ai/panda_ai/app.py" ]; then
+            SOURCE="panda_ai/panda_ai"
+            echo "✅ Source: panda_ai/panda_ai/"
+          else
+            echo "❌ app.py not found!"
+            find . -name "app.py" 2>/dev/null
+            exit 1
+          fi
+
+          # Copy all V6 files (REQUIRED — fail if missing)
+          for f in app.py search_tool.py file_processor.py memory.py requirements.txt Dockerfile; do
+            if [ -f "$SOURCE/$f" ]; then
+              cp "$SOURCE/$f" hf_space/
+              echo "✅ $f"
+            else
+              echo "❌ MISSING: $f"
+            fi
+          done
+
+          # Frontend files
+          for f in index.html script.js; do
+            if [ -f "$SOURCE/$f" ]; then
+              cp "$SOURCE/$f" hf_space/
+              echo "✅ $f"
+            else
+              echo "⚠️  Missing frontend: $f"
+            fi
+          done
+
+          # memory.json — 3-way safe handling
+          if [ -f "$SOURCE/memory.json" ]; then
+            cp "$SOURCE/memory.json" hf_space/memory.json
+            echo "✅ memory.json (from repo)"
+          elif [ -f "hf_space/memory.json" ]; then
+            echo "ℹ️  memory.json preserved (HF live data)"
+          else
+            cat > hf_space/memory.json << 'EOF'
+          {
+            "name": "Upendrasai",
+            "education": "Final-year MCA student, B.Sc Computer Science graduate",
+            "role": "MCA Student and Developer",
+            "job_target": "Java Developer or Full-Stack Developer",
+            "location_preference": "Hyderabad or Bangalore",
+            "skills": "Java, Python, Flask, Full-Stack Development",
+            "project": "Panda AI — real-time AI chatbot",
+            "srh_2026_fact": "T. Natarajan is NOT in SRH squad for IPL 2026",
+            "ipl_note": "Always verify IPL 2026 squad from live search"
+          }
+          EOF
+            echo "✅ memory.json created (default)"
+          fi
+
+          # tasks.json — never overwrite live data
+          if [ ! -f "hf_space/tasks.json" ]; then
+            echo "[]" > hf_space/tasks.json
+            echo "✅ tasks.json created (empty)"
+          else
+            echo "ℹ️  tasks.json preserved"
+          fi
+
+          # README
+          for readme in readme.md README.md Readme.md; do
+            if [ -f "$SOURCE/$readme" ]; then
+              cp "$SOURCE/$readme" hf_space/README.md
+              echo "✅ README: $readme"
+              break
+            fi
+          done
+
+          # Fail-safes
+          echo "=== HF Space contents ==="
+          ls -lah hf_space/
+
+          [ -f "hf_space/app.py" ]            || { echo "❌ app.py missing!"; exit 1; }
+          [ -f "hf_space/file_processor.py" ] || { echo "❌ file_processor.py missing!"; exit 1; }
+          [ -f "hf_space/search_tool.py" ]    || { echo "❌ search_tool.py missing!"; exit 1; }
+          [ -f "hf_space/memory.py" ]         || { echo "❌ memory.py missing!"; exit 1; }
+
+          # Commit and push
+          cd hf_space
+          git add -A
+          CHANGED=$(git diff --staged --stat)
+          if [ -z "$CHANGED" ]; then
+            echo "ℹ️  No changes — nothing to push"
+          else
+            echo "Changes: $CHANGED"
+            git commit -m "V6: Weather+News+Music+IST+DynamicPersona [$(git -C .. rev-parse --short HEAD)]"
+            git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
+            echo "✅ Push successful!"
+          fi
