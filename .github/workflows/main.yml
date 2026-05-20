@@ -1,4 +1,4 @@
-name: Sync Panda AI V8.3 to Hugging Face
+name: Sync Panda AI V8.4 to Hugging Face
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
           fi
 
           # ── Backend files (REQUIRED) ──
-          REQUIRED_FILES="app.py search_tool.py file_processor.py memory.py media_generator.py user_profile.py requirements.txt Dockerfile"
+          REQUIRED_FILES="app.py search_tool.py file_processor.py memory.py media_generator.py user_profile.py profile.py requirements.txt Dockerfile"
           for f in $REQUIRED_FILES; do
             if [ -f "$SOURCE/$f" ]; then
               cp "$SOURCE/$f" hf_space/
@@ -86,7 +86,8 @@ jobs:
             "job_target": "Java Developer or Full-Stack Developer",
             "location_preference": "Hyderabad or Bangalore",
             "skills": "Java, Python, Flask, Full-Stack Development",
-            "project": "Panda AI V8.3 — Multi-User Identity",
+            "project": "Panda AI V8.4 Studio — Mail, Pad, Study Modules",
+            "modules": "Chat, Mail (Pitch & Draft), Pad (Auto-save), Study (Tutor & Summary)",
             "srh_2026_fact": "T. Natarajan is NOT in SRH squad for IPL 2026",
             "ipl_note": "Always verify IPL 2026 squad from live search"
           }
@@ -111,6 +112,16 @@ jobs:
             fi
           done
 
+          # ── Module routes (V8.4 tools) ──
+          echo "=== Syncing V8.4 Modules ==="
+          for module_dir in mail pad study; do
+            if [ -d "$SOURCE/modules/$module_dir" ]; then
+              mkdir -p "hf_space/modules/$module_dir"
+              cp "$SOURCE/modules/$module_dir"/*.py "hf_space/modules/$module_dir/" 2>/dev/null || true
+              echo "✅ modules/$module_dir/"
+            fi
+          done
+
           # ── Fail-safe checks ──
           echo ""
           echo "=== HF Space contents ==="
@@ -123,6 +134,7 @@ jobs:
           [ -f "hf_space/memory.py" ]         || { echo "❌ memory.py missing!"; exit 1; }
           [ -f "hf_space/media_generator.py" ] || { echo "❌ media_generator.py missing!"; exit 1; }
           [ -f "hf_space/user_profile.py" ]   || { echo "❌ user_profile.py missing!"; exit 1; }
+          [ -f "hf_space/profile.py" ]       || { echo "❌ profile.py missing!"; exit 1; }
 
           # ── Commit and push ──
           cd hf_space
@@ -133,7 +145,7 @@ jobs:
           else
             echo "Changes:"
             echo "$CHANGED"
-            git commit -m "V8.3: Multi-User Identity & Smart Memory [$(git -C .. rev-parse --short HEAD)]"
+            git commit -m "V8.4: Panda Mail, Panda Pad, Study Buddy Modules [$(git -C .. rev-parse --short HEAD)]"
             git push https://Upendrasai:${HF_TOKEN}@huggingface.co/spaces/Upendrasai/Panda-AI-Official main
             echo "✅ Push successful!"
           fi
