@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Universal AI-Powered Resource & Budget ERP</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 1: PROFILE SELECTION                                    -->
+  <!-- ============================================================ -->
+  <section id="screen-profile" class="screen active">
+    <div class="container fade-in">
+      <h1 class="app-title">
+        <span class="app-title-icon">⚙</span>
+        Universal AI-Powered Resource &amp; Budget ERP
+      </h1>
+      <p class="app-subtitle">Choose the industry profile that matches your business</p>
+
+      <div id="profile-cards" class="profile-grid">
+        <!-- profile cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 2: BUDGET SETUP                                         -->
+  <!-- ============================================================ -->
+  <section id="screen-budget" class="screen">
+    <div class="container fade-in">
+      <h2 class="section-title">Set Your Budget</h2>
+      <p id="budget-profile-label" class="app-subtitle"></p>
+
+      <form id="budget-form" class="card form-card">
+        <label>
+          Monthly / Project Budget Cap (Rs.)
+          <input type="number" id="input-budget-cap" min="0" step="0.01" placeholder="e.g. 50000" required />
+        </label>
+        <label>
+          Budget Period Length (days)
+          <input type="number" id="input-budget-days" min="1" placeholder="e.g. 30" required />
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">
+          Start ERP Session <span class="btn-arrow">→</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 3: DASHBOARD                                            -->
+  <!-- ============================================================ -->
+  <section id="screen-dashboard" class="screen">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="app-title-icon small">⚙</span>
+        <div>
+          <div class="topbar-profile" id="topbar-profile">—</div>
+          <div class="topbar-sub">Universal Resource &amp; Budget ERP</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="budget-pill" id="budget-pill">
+          <div class="budget-pill-bar"><div class="budget-pill-fill" id="budget-pill-fill"></div></div>
+          <span id="budget-pill-text">Rs.0 remaining</span>
+        </div>
+        <button class="btn btn-ghost" id="btn-switch-profile">Switch Profile</button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="resources">📦 Resources</button>
+      <button class="tab" data-tab="lowstock">⚠ Low Stock</button>
+      <button class="tab" data-tab="transactions">🧾 Transactions</button>
+      <button class="tab" data-tab="budget">💰 Budget</button>
+      <button class="tab" data-tab="ai">🤖 AI Tools</button>
+    </nav>
+
+    <main class="container">
+
+      <!-- ---------------- RESOURCES TAB ---------------- -->
+      <div class="tab-panel active" id="panel-resources">
+        <div class="panel-header">
+          <h2 class="section-title">All Resources</h2>
+          <button class="btn btn-primary" id="btn-open-add">+ Add Resource</button>
+        </div>
+        <div class="table-wrap card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th>
+                <th>Buy Price</th><th>Sell Price</th><th>Reorder Lvl</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="resources-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- LOW STOCK TAB ---------------- -->
+      <div class="tab-panel" id="panel-lowstock">
+        <h2 class="section-title">Low Stock Alerts</h2>
+        <div id="lowstock-list" class="card-grid"></div>
+      </div>
+
+      <!-- ---------------- TRANSACTIONS TAB ---------------- -->
+      <div class="tab-panel" id="panel-transactions">
+        <h2 class="section-title">Transaction Log</h2>
+        <div class="table-wrap card">
+          <table class="data-table">
+            <thead><tr><th>Time</th><th>Type</th><th>Resource</th><th>Qty Δ</th><th>Amount</th><th>Note</th></tr></thead>
+            <tbody id="transactions-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- BUDGET TAB ---------------- -->
+      <div class="tab-panel" id="panel-budget">
+        <h2 class="section-title">Budget Dashboard</h2>
+        <div class="stats-grid" id="budget-stats"></div>
+
+        <div class="card form-card">
+          <h3>Record a Purchase <span class="hint">(Smart Purchase Guard)</span></h3>
+          <form id="purchase-form" class="inline-form">
+            <input type="text" id="purchase-desc" placeholder="Item / description" required />
+            <input type="number" id="purchase-cost" placeholder="Cost (Rs.)" min="0" step="0.01" required />
+            <button type="submit" class="btn btn-primary">Record</button>
+          </form>
+        </div>
+
+        <div class="card form-card">
+          <h3>Cost Optimizer <span class="hint">(EOQ + AI Vendor Insights)</span></h3>
+          <form id="eoq-form" class="inline-form">
+            <input type="text" id="eoq-name" placeholder="Item name" required />
+            <input type="number" id="eoq-demand" placeholder="Annual demand (units)" min="1" required />
+            <input type="number" id="eoq-order-cost" placeholder="Ordering cost / order (Rs.)" min="0" step="0.01" required />
+            <input type="number" id="eoq-holding-cost" placeholder="Holding cost / unit / yr (Rs.)" min="0.01" step="0.01" required />
+            <button type="submit" class="btn btn-primary">Optimize</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ---------------- AI TOOLS TAB ---------------- -->
+      <div class="tab-panel" id="panel-ai">
+        <h2 class="section-title">Groq AI Features</h2>
+        <div class="ai-grid">
+          <button class="ai-card" data-ai="advisor">
+            <span class="ai-icon">📊</span>
+            <span class="ai-name">Business Advisor</span>
+            <span class="ai-desc">Domain-aware insights &amp; clearance suggestions</span>
+          </button>
+          <button class="ai-card" data-ai="reorder-email">
+            <span class="ai-icon">✉️</span>
+            <span class="ai-name">Reorder Email Generator</span>
+            <span class="ai-desc">Draft a supplier purchase order email</span>
+          </button>
+          <button class="ai-card" data-ai="query">
+            <span class="ai-icon">🔍</span>
+            <span class="ai-name">Natural Language Query</span>
+            <span class="ai-desc">Ask anything about your inventory</span>
+          </button>
+          <button class="ai-card" data-ai="categorize">
+            <span class="ai-icon">🏷️</span>
+            <span class="ai-name">Auto-Categorizer</span>
+            <span class="ai-desc">Category + description for a new item</span>
+          </button>
+          <button class="ai-card" data-ai="fraud-audit">
+            <span class="ai-icon">⚠️</span>
+            <span class="ai-name">Fraud &amp; Leakage Audit</span>
+            <span class="ai-desc">Scan transaction log for anomalies</span>
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: ADD RESOURCE                                            -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="modal-add-resource">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add New Resource</h3>
+        <button class="modal-close" data-close="modal-add-resource">✕</button>
+      </div>
+      <form id="add-resource-form" class="modal-body">
+        <label>Name <input type="text" id="ar-name" required /></label>
+        <label>Category <input type="text" id="ar-category" placeholder="leave blank to auto-fill with AI" /></label>
+        <label>Unit <input type="text" id="ar-unit" placeholder="e.g. units, kg, bags" /></label>
+        <div class="grid-2">
+          <label>Quantity <input type="number" id="ar-qty" min="0" required /></label>
+          <label>Reorder Level <input type="number" id="ar-reorder" min="0" required /></label>
+        </div>
+        <div class="grid-2">
+          <label>Buy Price (Rs.) <input type="number" id="ar-buy" min="0" step="0.01" required /></label>
+          <label>Sell Price (Rs.) <input type="number" id="ar-sell" min="0" step="0.01" required /></label>
+        </div>
+        <label>Description <textarea id="ar-desc" placeholder="leave blank to auto-generate with AI"></textarea></label>
+        <button type="submit" class="btn btn-primary btn-block">Add Resource</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: AI RESULT                                               -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="modal-ai">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h3 id="ai-modal-title">AI Assistant</h3>
+        <button class="modal-close" data-close="modal-ai">✕</button>
+      </div>
+      <div class="modal-body" id="ai-modal-body">
+        <!-- dynamic form / result / spinner injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: SWITCH PROFILE                                          -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="modal-switch-profile">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h3>Switch Industry Profile</h3>
+        <button class="modal-close" data-close="modal-switch-profile">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="app-subtitle" style="margin-top:-6px;">Your inventory and budget stay the same — only the AI's domain context changes.</p>
+        <div id="switch-profile-cards" class="profile-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
