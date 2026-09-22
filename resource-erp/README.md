@@ -1,5 +1,6 @@
 <div align="center">
-  <h1>🏢 Universal AI-Powered Resource & Budget ERP System</h1>
+  <p><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=3B82F6&center=true&vCenter=true&width=750&height=50&lines=%F0%9F%8F%A2+Universal+AI-Powered+Resource+%26+Budget+ERP;Pure+Java+11%2B+%26+Groq+REST+API;Multi-Domain+Enterprise+Architecture" alt="Typing SVG" /></p>
+  
   <p><b>A multi-domain ERP built with pure Java 11+ and Groq REST API, featuring a runtime Industry Profile switcher and browser dashboard.</b></p>
   
   <p>
