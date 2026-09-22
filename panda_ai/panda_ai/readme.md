@@ -1,12 +1,14 @@
 ---
-title: Panda AI Official
-emoji: 🐼
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_file: app.py
+title: "Panda AI Official"
+emoji: "🐼"
+colorFrom: "blue"
+colorTo: "indigo"
+sdk: "docker"
+app_file: "app.py"
 pinned: false
----<div align="center">
+---
+
+<div align="center">
   <h1>🐼 Panda AI — Real-Time AI Assistant</h1>
   <p><b>Powered by Groq Llama 3.3 70B with live web search, multimodal processing, and high-availability architecture.</b></p>
   
